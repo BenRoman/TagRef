@@ -1,0 +1,88 @@
+﻿@model IEnumerable<TagRef.Models.Reference>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<script src="~/Scripts/typeahead.bundle.js"></script>
+
+@*<script src="~/Scripts/bootstrap-tagsinput.min.js"></script>*@
+<script src="~/Scripts/tagsinput.js"></script>
+
+<link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
+<link href="~/Content/typeaheadjs.css" rel="stylesheet" />
+
+@Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tags)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <div class="col-md-10" id="prefetch">
+                    <input type="text" value=@item.TagsValue disabled data-role="tagsinput" />
+                </div>
+            </td>
+            @*<td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>*@
+        </tr>
+    }
+
+</table>
+
+
+
+@section scripts
+{
+    <script>
+        $(document).on("keypress", "form", function (event) {
+            return event.keyCode != 13;
+        });
+
+        $(function () {
+            var countries = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                //prefetch: '../countries.json'
+                prefetch: {
+                    url: "/Home/AllTags",
+                    cache: false,
+                }
+            });
+            countries.initialize();
+
+            $('#tags').tagsinput({
+                typeaheadjs: {
+                    name: 'citynames',
+                    source: countries.ttAdapter(),
+                }
+            });
+
+        })
+
+
+
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+}
