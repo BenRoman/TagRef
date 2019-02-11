@@ -14,7 +14,7 @@ namespace TagRef.Controllers
         {
             using (var db = new TagRefContext())
             {
-                var all = db.References.ToList();
+                var all = db.References.Include(w=>w.Tags).ToList();
                 return View(all);
             }
         }
@@ -32,23 +32,24 @@ namespace TagRef.Controllers
             {
                 if (db.References.FirstOrDefault(w => w.Title == refer.Title) == null)
                 {
-                    db.References.Add(refer);
-                    db.SaveChanges();
+            
                     List<Tag> tmp = new List<Tag>();
                     foreach (var item in refer.TagsValue.Split(','))
                     {
                         Tag tg = db.Tags.FirstOrDefault(w => w.Text == item);
                         if (tg == null)
                         {
-                            tg = new Tag() { References = { db.References.First(w => w.Id == refer.Id) }, Text = item };
+                            tg = new Tag() { Text = item };
                             db.Tags.Add(tg);
                         }
-                        else
-                            db.Tags.FirstOrDefault(w => w.Text == item).References.Add(db.References.First(w => w.Id == refer.Id));
+                        //else
+                        //{
+                        //    tg.References.Remove().Where(w => w.Id == refer.Id);
+                        //}
                         tmp.Add(tg);
                     }
                     refer.Tags = tmp;
-                    db.Entry(refer).State = EntityState.Modified;
+                    db.References.Add(refer);
                     db.SaveChanges();
                 }
             }
@@ -65,7 +66,7 @@ namespace TagRef.Controllers
             }
             using (var db = new TagRefContext())
             {
-                Reference refer = db.References.Find(id);
+                Reference refer = db.References.Include(w => w.Tags).FirstOrDefault(w => w.Id == id);
                 if (refer != null)
                 {
                     return View(refer);
@@ -73,6 +74,51 @@ namespace TagRef.Controllers
             }
             return HttpNotFound();
         }
+        
+        [HttpPost]
+        public ActionResult Edit(Reference tmp)
+        {
+
+            var a = new List<Tag>();
+
+            using (var db = new TagRefContext())
+            {
+                foreach (var item in tmp.TagsValue.Split(','))
+                {
+                    Tag tg = db.Tags.FirstOrDefault(w => w.Text == item);
+                    if (tg == null)
+                    {
+                        tg = new Tag() { Text = item };
+                        db.Tags.Add(tg);
+                    }
+                    a.Add(tg);
+
+                }
+                tmp.Tags = a;
+
+                db.Entry(tmp).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+           
+            
+            return RedirectToAction("Index");
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+            using (var db = new TagRefContext())
+            {
+                Reference b = db.References.Find(id);
+                if (b != null)
+                {
+                    db.References.Remove(b);
+                    db.SaveChanges();
+                }
+                return RedirectToAction("Index");
+            }
+        }
+
 
         public JsonResult AllTags()
         {

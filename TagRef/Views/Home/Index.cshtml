@@ -29,6 +29,12 @@
 
     @foreach (var item in Model)
     {
+        var str = "";
+        foreach (var tags in item.Tags)
+        {
+            str += tags.Text+",";
+        }
+        str.Remove(str.Length-1);
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -41,11 +47,11 @@
                     <input type="text" value=@item.TagsValue disabled data-role="tagsinput" />
                 </div>
             </td>
-            @*<td>
+            <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>*@
+            </td>
         </tr>
     }
 
