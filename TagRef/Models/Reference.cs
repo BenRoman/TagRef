@@ -11,7 +11,6 @@ namespace TagRef.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string TagsValue { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
         public Reference()
         {

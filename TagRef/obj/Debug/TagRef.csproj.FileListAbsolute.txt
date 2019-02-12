@@ -82,3 +82,6 @@ C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.csproj.CoreCompileInp
 C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.csproj.CopyComplete
 C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.dll
 C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.pdb
+C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.Migrations.InitialCreate.resources
+C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.csproj.GenerateResource.cache
+C:\Users\romas\source\repos\TagRef\TagRef\obj\Debug\TagRef.Migrations.TagsValue.resources

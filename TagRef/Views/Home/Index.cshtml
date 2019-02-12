@@ -4,16 +4,13 @@
     ViewBag.Title = "Index";
 }
 
-<script src="~/Scripts/typeahead.bundle.js"></script>
-
 @*<script src="~/Scripts/bootstrap-tagsinput.min.js"></script>*@
 <script src="~/Scripts/tagsinput.js"></script>
 
 <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
-<link href="~/Content/typeaheadjs.css" rel="stylesheet" />
 
 @Html.ActionLink("Create New", "Create")
-</p>
+
 <table class="table">
     <tr>
         <th>
@@ -29,12 +26,12 @@
 
     @foreach (var item in Model)
     {
-        var str = "";
-        foreach (var tags in item.Tags)
-        {
-            str += tags.Text+",";
-        }
-        str.Remove(str.Length-1);
+        var str = string.Join(",", item.Tags.Select(w=>w.Text));
+        //foreach (var tag in item.Tags)
+        //{
+        //    str += tag.Text + ",";
+        //}
+        //str = str.Length > 0 ? str.Remove(str.Length - 1) : "";
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
@@ -44,12 +41,11 @@
             </td>
             <td>
                 <div class="col-md-10" id="prefetch">
-                    <input type="text" value=@item.TagsValue disabled data-role="tagsinput" />
+                    <input type="text" value="@str"  data-role="tagsinput" disabled />
                 </div>
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
                 @Html.ActionLink("Delete", "Delete", new { id = item.Id })
             </td>
         </tr>
@@ -57,9 +53,7 @@
 
 </table>
 
-
-
-@section scripts
+@*@section scripts
 {
     <script>
         $(document).on("keypress", "form", function (event) {
@@ -87,8 +81,6 @@
 
         })
 
-
-
     </script>
     @Scripts.Render("~/bundles/jqueryval")
-}
+}*@

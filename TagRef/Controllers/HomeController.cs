@@ -26,15 +26,14 @@ namespace TagRef.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(Reference refer)
+        public ActionResult Create(Reference refer , string TagsValue)
         {
             using (var db = new TagRefContext())
             {
                 if (db.References.FirstOrDefault(w => w.Title == refer.Title) == null)
                 {
-            
                     List<Tag> tmp = new List<Tag>();
-                    foreach (var item in refer.TagsValue.Split(','))
+                    foreach (var item in TagsValue.Split(','))
                     {
                         Tag tg = db.Tags.FirstOrDefault(w => w.Text == item);
                         if (tg == null)
@@ -42,10 +41,6 @@ namespace TagRef.Controllers
                             tg = new Tag() { Text = item };
                             db.Tags.Add(tg);
                         }
-                        //else
-                        //{
-                        //    tg.References.Remove().Where(w => w.Id == refer.Id);
-                        //}
                         tmp.Add(tg);
                     }
                     refer.Tags = tmp;
@@ -53,7 +48,6 @@ namespace TagRef.Controllers
                     db.SaveChanges();
                 }
             }
-
             return RedirectToAction("Index");
         }
 
@@ -76,14 +70,14 @@ namespace TagRef.Controllers
         }
         
         [HttpPost]
-        public ActionResult Edit(Reference tmp)
+        public ActionResult Edit(Reference tmp , string TagsValue)
         {
-
-            var a = new List<Tag>();
-
+            List<Tag> tags = new List<Tag>();
             using (var db = new TagRefContext())
             {
-                foreach (var item in tmp.TagsValue.Split(','))
+                var refer = db.References.Find(tmp.Id);
+                refer.Tags.ToList().ForEach(tag => refer.Tags.Remove(tag));
+                foreach (var item in TagsValue.Split(','))
                 {
                     Tag tg = db.Tags.FirstOrDefault(w => w.Text == item);
                     if (tg == null)
@@ -91,16 +85,11 @@ namespace TagRef.Controllers
                         tg = new Tag() { Text = item };
                         db.Tags.Add(tg);
                     }
-                    a.Add(tg);
-
+                    tags.Add(tg);
                 }
-                tmp.Tags = a;
-
-                db.Entry(tmp).State = EntityState.Modified;
+                tags.ForEach(w => refer.Tags.Add(w));
                 db.SaveChanges();
             }
-           
-            
             return RedirectToAction("Index");
         }
 
@@ -126,7 +115,6 @@ namespace TagRef.Controllers
             {
                 var tags = db.Tags.Select(w => w.Text).ToList();
                 return Json(tags, JsonRequestBehavior.AllowGet);
-
             }
         }
 
